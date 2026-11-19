@@ -1,0 +1,32 @@
+# Render Blueprint: FastAPI and frontend together, free compute ONLY.
+# The SQLite database on free compute is temporary and will reset on sleep/redeploy.
+services:
+  - type: web
+    name: scamshield-ai
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.scamshield_api:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips '*'
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: SCAMSHIELD_DB_PATH
+        value: /tmp/scamshield.sqlite3
+      - key: SCAMSHIELD_SECURE_COOKIES
+        value: '1'
+      - key: SCAMSHIELD_AGENT_MODE
+        value: multi
+      - key: OPENAI_MODEL
+        value: gpt-5-nano
+      - key: GOOGLE_SAFE_BROWSING_API_KEY
+        sync: false
+      - key: VIRUSTOTAL_API_KEY
+        sync: false
+      - key: URLSCAN_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      # Required only when your LLM API is not hosted at api.openai.com.
+      - key: OPENAI_BASE_URL
+        sync: false
