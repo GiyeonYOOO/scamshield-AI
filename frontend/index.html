@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="의심스러운 URL과 메시지의 위험 신호를 확인하는 SCAMSHIELD AI">
+  <meta name="referrer" content="same-origin">
+  <title>SCAMSHIELD AI · 디지털 사기 예방</title>
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="/assets/styles.css?v=follow-up-inline">
+  <script type="module" src="/assets/app.js?v=phone-judgment"></script>
+</head>
+<body>
+  <a class="skip" href="#main">본문으로 건너뛰기</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#home"><span class="brand-mark" aria-hidden="true"></span><span>SCAMSHIELD <span class="accent">AI</span></span></a>
+      <nav aria-label="주 메뉴">
+        <a href="#home" aria-current="page">홈</a>
+        <a href="#analysis">위험 분석</a>
+        <a href="#plans">예방 계획</a>
+        <a href="#logs">실행 로그</a>
+      </nav>
+      <a href="/docs" class="api-link">API 문서 <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+  <main id="main" tabindex="-1">
+    <section id="home-page" class="workspace" aria-labelledby="home-title">
+      <div class="hero">
+        <div class="hero-copy">
+          <h1 id="home-title">의심되는 순간,<br><em>쉴디에게 물어보세요.</em></h1>
+          <p>문자와 링크의 위험 신호를 살펴보고, 지금 할 수 있는 예방 행동을 안내합니다.</p>
+          <a class="primary home-start" href="#analysis">위험 분석 시작</a>
+        </div>
+        <figure class="hero-guide">
+          <img class="shieldy" src="/assets/shieldy-transparent.png" width="1117" height="1409" alt="자물쇠가 그려진 방패와 책을 든 캐릭터">
+        </figure>
+      </div>
+      <section class="home-section" aria-labelledby="quick-title">
+        <h2 id="quick-title">어떤 도움이 필요하신가요?</h2>
+        <div class="quick-links">
+          <a href="#analysis-url" class="quick-link">
+            <span class="quick-icon link-icon" aria-hidden="true"></span>
+            <strong>의심 링크 확인</strong>
+            <span>URL 위험 근거 조회</span>
+          </a>
+          <a href="#analysis-text" class="quick-link">
+            <span class="quick-icon message-icon" aria-hidden="true"></span>
+            <strong>문자 사기 확인</strong>
+            <span>문자·메신저의 의심 정황 분석</span>
+          </a>
+          <a href="#call" class="quick-link">
+            <span class="quick-icon call-icon" aria-hidden="true">☎</span>
+            <strong>의심 전화·영상통화 확인</strong>
+            <span>상대의 요청을 확인하고 송금·정보 전달 전에 대응하기</span>
+          </a>
+        </div>
+      </section>
+      <section class="home-section" aria-labelledby="guide-title">
+        <h2 id="guide-title">쉴디의 예방 가이드</h2>
+        <div class="prevention-guide">
+          <p><strong>인증번호는 누구에게도 전달하지 마세요.</strong></p>
+          <p>의심되는 연락을 받았다면 링크를 누르거나 송금하기 전에 기관의 공식 앱이나 대표번호로 확인하세요.</p>
+        </div>
+      </section>
+      <section class="home-section" aria-labelledby="process-title">
+        <h2 id="process-title">쉴디는 이렇게 확인해요</h2>
+        <ol class="process-steps">
+          <li>
+            <h3>내용 입력</h3>
+            <p>URL 또는 의심스러운 문자</p>
+          </li>
+          <li>
+            <h3>근거 분석</h3>
+            <p>입력 내용의 위험 신호 분석과 공개 URL 보안 조회</p>
+          </li>
+          <li>
+            <h3>예방 안내</h3>
+            <p>판단 근거와 지금 할 수 있는 대응 방법</p>
+          </li>
+        </ol>
+      </section>
+      <section class="home-section message-warning prevention-guide" aria-labelledby="warning-title">
+        <h2 id="warning-title">이런 메시지는 먼저 확인하세요</h2>
+        <p>택배 사칭 · 긴급 송금 요구 · 인증번호 요청 · 가짜 쇼핑몰</p>
+      </section>
+      <section class="home-section evidence-sources" aria-labelledby="evidence-title">
+        <h2 id="evidence-title">확인 가능한 보안 근거</h2>
+        <p>Google Safe Browsing · VirusTotal · urlscan.io</p>
+      </section>
+      <section class="home-section" aria-labelledby="activity-title">
+        <h2 id="activity-title">최근 활동</h2>
+        <div id="home-activity" class="activity-grid" aria-live="polite"></div>
+      </section>
+    </section>
+    <section id="analysis-page" class="workspace" aria-labelledby="analysis-title" hidden>
+      <div class="page-intro"><h1 id="analysis-title">위험 분석</h1></div>
+      <nav id="analysis-nav" class="analysis-nav" aria-label="위험 분석 유형">
+        <a href="#analysis-url">URL</a>
+        <a href="#analysis-text">메신저</a>
+        <a href="#call">전화</a>
+      </nav>
+      <div id="message-view" class="stack">
+          <section class="panel input-panel" aria-labelledby="input-title">
+            <div class="section-heading"><h2 id="input-title">URL 분석</h2><p id="input-description">의심스러운 공개 링크를 입력하세요.</p></div>
+            <form id="analysis-form" novalidate>
+              <input type="hidden" name="target_type" value="url">
+              <div class="input-heading"><label for="message">분석할 내용</label><span id="counter">0 / 4000</span></div>
+              <textarea id="message" name="message" rows="4" maxlength="4000" placeholder="예: https://example.com/ 링크를 검사해 주세요." aria-describedby="privacy analysis-feedback" required></textarea>
+              <p id="privacy" class="privacy"><span aria-hidden="true">ⓘ</span> URL은 외부 보안 서비스에서 조회될 수 있습니다. 주민번호, 인증번호, 개인 전용 링크는 입력 전에 제거해 주세요.</p>
+              <div id="context-option">
+                <label><input type="checkbox" name="context_analysis"> AI로 맥락 살펴보기</label>
+                <p id="context-privacy" class="row-hint">링크와 일부 민감정보를 가리고 입력 내용의 맥락을 살펴봐요. 개인정보는 먼저 지워 주세요.</p>
+                <div id="url-context-note" hidden>
+                  <label for="context-note">링크를 받은 상황 <small>선택</small></label>
+                  <textarea id="context-note" name="context_note" rows="2" maxlength="1000" placeholder="예: 택배 기사라고 하면서 링크에서 본인 확인을 하라고 했어요."></textarea>
+                </div>
+              </div>
+              <p id="analysis-feedback" class="feedback" role="status" hidden></p>
+              <button id="analyze" class="primary" type="submit">위험 분석 시작 <span aria-hidden="true">→</span></button>
+            </form>
+          </section>
+          <section id="analysis-result" class="panel result-panel" aria-label="위험 분석 결과" hidden></section>
+          <section class="panel timeline-panel" aria-labelledby="trace-title">
+            <div class="section-heading"><h2 id="trace-title">분석 실행 기록</h2></div>
+            <div id="trace" aria-live="polite"><div class="empty"><strong>아직 실행 기록이 없습니다.</strong></div></div>
+          </section>
+      </div>
+      <div id="call-view" class="stack" hidden>
+        <form id="call-form" class="panel call-form">
+          <div class="section-heading">
+            <h2 id="call-title">의심 전화·영상통화 확인</h2>
+            <p>통화 상황을 선택하면 대응 방법을 먼저 보여주고, 쉴디가 필요한 내용을 이어서 확인해요.</p>
+          </div>
+          <label for="call-channel">어떤 연락을 받았나요?
+            <select id="call-channel" name="channel" required>
+              <option value="">선택하세요</option>
+              <option value="voice">전화</option>
+              <option value="video">영상통화</option>
+            </select>
+          </label>
+          <label for="call-contact">누구라고 했나요?
+            <select id="call-contact" name="contact" required>
+              <option value="">선택하세요</option>
+              <option value="family">가족 또는 지인</option>
+              <option value="work">직장 상사 또는 거래처</option>
+              <option value="agency">은행 또는 공공기관</option>
+              <option value="other">그 외 또는 잘 모르겠어요</option>
+            </select>
+          </label>
+          <label for="call-request">상대가 무엇을 요구했나요?
+            <select id="call-request" name="request" required>
+              <option value="">선택하세요</option>
+              <option value="transfer">송금 또는 계좌 변경</option>
+              <option value="code">인증번호 또는 비밀번호 전달</option>
+              <option value="id_photo">신분증 사진 제출</option>
+              <option value="app">앱 설치 또는 원격 제어</option>
+              <option value="other">그 외 또는 잘 모르겠어요</option>
+            </select>
+          </label>
+          <label for="call-verification">원래 알던 번호나 공식 연락처로 따로 확인했나요?
+            <select id="call-verification" name="verification" required>
+              <option value="">선택하세요</option>
+              <option value="no">아직 확인하지 않았어요</option>
+              <option value="yes">직접 연락해 확인했어요</option>
+              <option value="denied">직접 물어보니 그런 요청을 한 적이 없대요</option>
+            </select>
+          </label>
+          <label class="call-check"><input type="checkbox" name="sent"><span>이미 돈을 보냈어요</span></label>
+          <label for="call-note">
+            <span>통화 상황 설명 <small>선택</small></span>
+            <textarea id="call-note" name="context_note" rows="3" maxlength="1000" aria-describedby="call-note-hint" placeholder="예: 가족이라고 말하며 새 번호로 전화해 급히 돈을 보내 달라고 했어요."></textarea>
+          </label>
+          <p id="call-note-hint" class="row-hint">연락처, 계좌번호, 인증번호 같은 개인정보는 적지 마세요.</p>
+          <label class="call-check"><input type="checkbox" name="context_analysis"><span>AI로 맥락 살펴보기</span></label>
+          <p class="row-hint">AI 맥락 분석을 선택하면 고른 항목과 일부 민감정보를 가린 상황 설명을 외부 AI에 보냅니다.</p>
+          <p class="row-hint">선택한 상황을 분석해요. 목소리나 얼굴이 AI로 만들어졌는지는 판별할 수 없어요.</p>
+          <button id="check-call" class="primary" type="submit">대응 방법 확인</button>
+        </form>
+        <section id="call-result" class="panel result-panel" aria-labelledby="call-result-title" hidden></section>
+      </div>
+    </section>
+    <section id="plans-page" class="workspace" aria-labelledby="plans-title" hidden>
+      <div class="page-intro plans-intro">
+        <div><h1 id="plans-title">예방 계획</h1><p>예방 행동을 글로 작성하고 다시 확인하세요.</p></div>
+        <button id="new-plan" type="button" class="primary">글쓰기</button>
+      </div>
+      <p id="plans-feedback" class="feedback" role="status" hidden></p>
+      <div id="plans-list" class="panel" aria-live="polite"></div>
+    </section>
+    <section id="logs-page" class="workspace" aria-labelledby="logs-title" hidden>
+      <div class="page-intro"><h1 id="logs-title">실행 로그</h1><p>현재 세션의 Agent 실행과 Tool 호출 이력을 확인하세요.</p></div>
+      <p id="logs-feedback" class="feedback" role="status" hidden></p>
+      <div class="workspace-grid">
+        <section class="panel" aria-labelledby="runs-title"><h2 id="runs-title">분석 실행 목록</h2><div id="logs-list" class="log-content" aria-live="polite"></div></section>
+        <section class="panel timeline-panel" aria-labelledby="log-detail-title"><h2 id="log-detail-title">실행 상세</h2><div id="log-detail" class="log-content" aria-live="polite"></div></section>
+      </div>
+    </section>
+  </main>
+  <dialog id="plan-dialog" aria-labelledby="plan-dialog-title">
+    <h2 id="plan-dialog-title" tabindex="-1">예방 계획</h2>
+    <article id="plan-post" hidden>
+      <time id="plan-created" class="row-hint"></time>
+      <dl id="plan-metadata" class="plan-metadata"></dl>
+      <div id="plan-overlap" class="feedback warn" hidden></div>
+      <section class="plan-content" aria-labelledby="plan-actions-title">
+        <h3 id="plan-actions-title">예방 행동 단계</h3>
+        <div id="plan-content"></div>
+      </section>
+      <div class="dialog-buttons">
+        <button type="button" class="secondary" data-close="plan-dialog">닫기</button>
+        <button id="edit-plan" type="button" class="primary">수정</button>
+      </div>
+    </article>
+    <form id="plan-form" novalidate hidden>
+      <label for="plan-title">계획 제목</label><input id="plan-title" name="title" maxlength="120" required>
+      <div id="draft-actions"></div>
+      <label id="edit-actions">내용 <small>최대 20줄, 한 줄에 500자</small><textarea name="actions" rows="7"></textarea></label>
+      <fieldset id="plan-schedule" class="plan-schedule" hidden>
+        <legend>실행 일정</legend>
+        <label>날짜<input type="date" name="execution_date"></label>
+        <label>시작 시각<input type="time" name="start_time" step="1"></label>
+        <label>종료 시각<input type="time" name="end_time" step="1"></label>
+      </fieldset>
+      <p id="plan-feedback" class="feedback" role="status" hidden></p>
+      <div class="dialog-buttons"><button id="cancel-plan" type="button" class="secondary">취소</button><button id="save-plan" class="primary">저장</button></div>
+    </form>
+  </dialog>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <form method="dialog">
+      <h2 id="confirm-title">항목을 삭제할까요?</h2>
+      <p id="confirm-text"></p>
+      <div class="dialog-buttons"><button class="secondary" value="cancel" autofocus>취소</button><button class="danger" value="delete">삭제</button></div>
+    </form>
+  </dialog>
+</body>
+</html>
