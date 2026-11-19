@@ -1,0 +1,49 @@
+{
+  "analysis_run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+  "requests": [
+    {
+      "http_status": 201,
+      "plan": {
+        "id": "3fb1240ff0bd43b6b866849c7164f404",
+        "analysis_id": "7fbe35e448f14e74acaea789b0fb40f2",
+        "title": "공식 연락처 확인",
+        "target_type": "text",
+        "actions": [
+          "확인이 끝날 때까지 링크 열기, 정보 입력, 송금, 앱 설치를 보류하세요.",
+          "메시지의 링크 대신 해당 기관의 공식 앱이나 직접 확인한 주소를 사용하세요.",
+          "비밀번호·인증번호·송금 요청은 발신자가 제공한 연락처와 다른 공식 경로로 확인하세요."
+        ],
+        "execution_date": "2026-11-18",
+        "start_time": "09:00:00",
+        "end_time": "10:00:00",
+        "created_at": "2026-11-18T08:30:12.804700+00:00",
+        "updated_at": "2026-11-18T08:30:12.804700+00:00"
+      },
+      "has_overlap": false,
+      "overlapping_plan_ids": []
+    },
+    {
+      "http_status": 201,
+      "plan": {
+        "id": "a64712792e444e23a4bb366f69c23334",
+        "analysis_id": "7fbe35e448f14e74acaea789b0fb40f2",
+        "title": "공식 앱 알림 확인",
+        "target_type": "text",
+        "actions": [
+          "확인이 끝날 때까지 링크 열기, 정보 입력, 송금, 앱 설치를 보류하세요.",
+          "메시지의 링크 대신 해당 기관의 공식 앱이나 직접 확인한 주소를 사용하세요.",
+          "비밀번호·인증번호·송금 요청은 발신자가 제공한 연락처와 다른 공식 경로로 확인하세요."
+        ],
+        "execution_date": "2026-11-18",
+        "start_time": "09:00:00",
+        "end_time": "10:00:00",
+        "created_at": "2026-11-18T08:30:12.969524+00:00",
+        "updated_at": "2026-11-18T08:30:12.969524+00:00"
+      },
+      "has_overlap": true,
+      "overlapping_plan_ids": [
+        "3fb1240ff0bd43b6b866849c7164f404"
+      ]
+    }
+  ]
+}

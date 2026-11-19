@@ -1,0 +1,231 @@
+{
+  "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+  "events": [
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 1,
+      "occurred_at": "2026-11-18T08:30:09.204507+00:00",
+      "event_type": "run.started",
+      "data": {
+        "max_replans": 2
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 2,
+      "occurred_at": "2026-11-18T08:30:09.210515+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "analyze"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 3,
+      "occurred_at": "2026-11-18T08:30:10.367812+00:00",
+      "event_type": "llm.decision",
+      "data": {
+        "stage": "intent_and_plan",
+        "choice": "google_safe_browsing"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 4,
+      "occurred_at": "2026-11-18T08:30:10.372798+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "analyze",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 5,
+      "occurred_at": "2026-11-18T08:30:10.377804+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "plan"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 6,
+      "occurred_at": "2026-11-18T08:30:10.378768+00:00",
+      "event_type": "planner.task",
+      "data": {
+        "task_id": 1,
+        "revision": 0,
+        "tool": "google_safe_browsing",
+        "fixed_url": true,
+        "fixed_days": false
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 7,
+      "occurred_at": "2026-11-18T08:30:10.378768+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "plan",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 8,
+      "occurred_at": "2026-11-18T08:30:10.378768+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "execute"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 9,
+      "occurred_at": "2026-11-18T08:30:10.378768+00:00",
+      "event_type": "worker.attempt",
+      "data": {
+        "task_id": 1,
+        "tool": "google_safe_browsing",
+        "attempt": 1
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 10,
+      "occurred_at": "2026-11-18T08:30:10.391939+00:00",
+      "event_type": "tool.requested",
+      "data": {
+        "tool": "google_safe_browsing",
+        "target_scope": "url"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 11,
+      "occurred_at": "2026-11-18T08:30:10.692196+00:00",
+      "event_type": "tool.finished",
+      "data": {
+        "tool": "google_safe_browsing",
+        "outcome": "NO_MATCH",
+        "duration_ms": 298,
+        "ok": true
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 12,
+      "occurred_at": "2026-11-18T08:30:10.698730+00:00",
+      "event_type": "worker.decision",
+      "data": {
+        "task_id": 1,
+        "action": "complete",
+        "llm_called": false,
+        "retried": false,
+        "request_plan_change": false
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 13,
+      "occurred_at": "2026-11-18T08:30:10.702729+00:00",
+      "event_type": "audit.checked",
+      "data": {
+        "status": "verified",
+        "request_plan_change": false,
+        "llm_called": false,
+        "revision": 0
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 14,
+      "occurred_at": "2026-11-18T08:30:10.704727+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "execute",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 15,
+      "occurred_at": "2026-11-18T08:30:10.707727+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "judge"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 16,
+      "occurred_at": "2026-11-18T08:30:10.710727+00:00",
+      "event_type": "replan.decided",
+      "data": {
+        "performed": false,
+        "reason": "EVIDENCE_COLLECTED",
+        "count": 0,
+        "source": "rules"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 17,
+      "occurred_at": "2026-11-18T08:30:10.712396+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "judge",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 18,
+      "occurred_at": "2026-11-18T08:30:10.712396+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "respond"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 19,
+      "occurred_at": "2026-11-18T08:30:12.181527+00:00",
+      "event_type": "llm.decision",
+      "data": {
+        "stage": "response",
+        "choice": "prioritize_action"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 20,
+      "occurred_at": "2026-11-18T08:30:12.197069+00:00",
+      "event_type": "response.generated",
+      "data": {
+        "status": "SUSPICIOUS"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 21,
+      "occurred_at": "2026-11-18T08:30:12.200241+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "respond",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "7fbe35e448f14e74acaea789b0fb40f2",
+      "sequence": 22,
+      "occurred_at": "2026-11-18T08:30:12.204006+00:00",
+      "event_type": "run.finished",
+      "data": {
+        "status": "completed",
+        "replans": 0
+      }
+    }
+  ]
+}

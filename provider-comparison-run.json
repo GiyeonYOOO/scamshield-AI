@@ -1,0 +1,300 @@
+{
+  "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+  "events": [
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 1,
+      "occurred_at": "2026-11-18T08:30:14.328066+00:00",
+      "event_type": "run.started",
+      "data": {
+        "max_replans": 2
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 2,
+      "occurred_at": "2026-11-18T08:30:14.332066+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "analyze"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 3,
+      "occurred_at": "2026-11-18T08:30:14.336649+00:00",
+      "event_type": "llm.decision",
+      "data": {
+        "stage": "intent_and_plan",
+        "choice": "google_safe_browsing"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 4,
+      "occurred_at": "2026-11-18T08:30:14.336649+00:00",
+      "event_type": "llm.decision",
+      "data": {
+        "stage": "intent_and_plan",
+        "choice": "virustotal_url"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 5,
+      "occurred_at": "2026-11-18T08:30:14.336649+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "analyze",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 6,
+      "occurred_at": "2026-11-18T08:30:14.336649+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "plan"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 7,
+      "occurred_at": "2026-11-18T08:30:14.336649+00:00",
+      "event_type": "planner.task",
+      "data": {
+        "task_id": 1,
+        "revision": 0,
+        "tool": "google_safe_browsing",
+        "fixed_url": true,
+        "fixed_days": false
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 8,
+      "occurred_at": "2026-11-18T08:30:14.351875+00:00",
+      "event_type": "planner.task",
+      "data": {
+        "task_id": 2,
+        "revision": 0,
+        "tool": "virustotal_url",
+        "fixed_url": true,
+        "fixed_days": false
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 9,
+      "occurred_at": "2026-11-18T08:30:14.354876+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "plan",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 10,
+      "occurred_at": "2026-11-18T08:30:14.357876+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "execute"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 11,
+      "occurred_at": "2026-11-18T08:30:14.360876+00:00",
+      "event_type": "worker.attempt",
+      "data": {
+        "task_id": 1,
+        "tool": "google_safe_browsing",
+        "attempt": 1
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 12,
+      "occurred_at": "2026-11-18T08:30:14.362876+00:00",
+      "event_type": "tool.requested",
+      "data": {
+        "tool": "google_safe_browsing",
+        "target_scope": "url"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 13,
+      "occurred_at": "2026-11-18T08:30:14.366876+00:00",
+      "event_type": "tool.finished",
+      "data": {
+        "tool": "google_safe_browsing",
+        "outcome": "NO_MATCH",
+        "duration_ms": 0,
+        "ok": true
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 14,
+      "occurred_at": "2026-11-18T08:30:14.369876+00:00",
+      "event_type": "worker.decision",
+      "data": {
+        "task_id": 1,
+        "action": "complete",
+        "llm_called": false,
+        "retried": false,
+        "request_plan_change": false
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 15,
+      "occurred_at": "2026-11-18T08:30:14.373324+00:00",
+      "event_type": "worker.attempt",
+      "data": {
+        "task_id": 2,
+        "tool": "virustotal_url",
+        "attempt": 1
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 16,
+      "occurred_at": "2026-11-18T08:30:14.375887+00:00",
+      "event_type": "tool.requested",
+      "data": {
+        "tool": "virustotal_url",
+        "target_scope": "url"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 17,
+      "occurred_at": "2026-11-18T08:30:14.379519+00:00",
+      "event_type": "tool.finished",
+      "data": {
+        "tool": "virustotal_url",
+        "outcome": "REPORT",
+        "duration_ms": 0,
+        "ok": true
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 18,
+      "occurred_at": "2026-11-18T08:30:14.383329+00:00",
+      "event_type": "worker.decision",
+      "data": {
+        "task_id": 2,
+        "action": "complete",
+        "llm_called": false,
+        "retried": false,
+        "request_plan_change": false
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 19,
+      "occurred_at": "2026-11-18T08:30:14.386408+00:00",
+      "event_type": "audit.checked",
+      "data": {
+        "status": "verified",
+        "request_plan_change": false,
+        "llm_called": false,
+        "revision": 0
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 20,
+      "occurred_at": "2026-11-18T08:30:14.389578+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "execute",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 21,
+      "occurred_at": "2026-11-18T08:30:14.392095+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "judge"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 22,
+      "occurred_at": "2026-11-18T08:30:14.395095+00:00",
+      "event_type": "replan.decided",
+      "data": {
+        "performed": false,
+        "reason": "EVIDENCE_COLLECTED",
+        "count": 0,
+        "source": "rules"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 23,
+      "occurred_at": "2026-11-18T08:30:14.398095+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "judge",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 24,
+      "occurred_at": "2026-11-18T08:30:14.399202+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "respond"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 25,
+      "occurred_at": "2026-11-18T08:30:14.399202+00:00",
+      "event_type": "llm.decision",
+      "data": {
+        "stage": "response",
+        "choice": "prioritize_action"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 26,
+      "occurred_at": "2026-11-18T08:30:14.399202+00:00",
+      "event_type": "response.generated",
+      "data": {
+        "status": "SUSPICIOUS"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 27,
+      "occurred_at": "2026-11-18T08:30:14.399202+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "respond",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "7fb99bcf10844ad89fcf2dd41ea24358",
+      "sequence": 28,
+      "occurred_at": "2026-11-18T08:30:14.399202+00:00",
+      "event_type": "run.finished",
+      "data": {
+        "status": "completed",
+        "replans": 0
+      }
+    }
+  ]
+}

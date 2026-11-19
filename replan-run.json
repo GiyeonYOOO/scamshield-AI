@@ -1,0 +1,426 @@
+{
+  "run_id": "22f6b3770aef425398782fb6311257c0",
+  "events": [
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 1,
+      "occurred_at": "2026-11-18T08:18:11.446987+00:00",
+      "event_type": "run.started",
+      "data": {
+        "max_replans": 1
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 2,
+      "occurred_at": "2026-11-18T08:18:11.458987+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "analyze"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 3,
+      "occurred_at": "2026-11-18T08:18:11.462987+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "analyze",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 4,
+      "occurred_at": "2026-11-18T08:18:11.466151+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "plan"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 5,
+      "occurred_at": "2026-11-18T08:18:11.469230+00:00",
+      "event_type": "planner.task",
+      "data": {
+        "task_id": 1,
+        "revision": 0,
+        "tool": "google_safe_browsing",
+        "fixed_url": true,
+        "fixed_days": false
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 6,
+      "occurred_at": "2026-11-18T08:18:11.473124+00:00",
+      "event_type": "planner.task",
+      "data": {
+        "task_id": 2,
+        "revision": 0,
+        "tool": "virustotal_url",
+        "fixed_url": true,
+        "fixed_days": false
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 7,
+      "occurred_at": "2026-11-18T08:18:11.476193+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "plan",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 8,
+      "occurred_at": "2026-11-18T08:18:11.479303+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "execute"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 9,
+      "occurred_at": "2026-11-18T08:18:11.482430+00:00",
+      "event_type": "worker.attempt",
+      "data": {
+        "task_id": 1,
+        "tool": "google_safe_browsing",
+        "attempt": 1
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 10,
+      "occurred_at": "2026-11-18T08:18:11.484449+00:00",
+      "event_type": "tool.requested",
+      "data": {
+        "tool": "google_safe_browsing",
+        "target_scope": "url"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 11,
+      "occurred_at": "2026-11-18T08:18:11.770429+00:00",
+      "event_type": "tool.finished",
+      "data": {
+        "tool": "google_safe_browsing",
+        "outcome": "NO_MATCH",
+        "duration_ms": 284,
+        "ok": true
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 12,
+      "occurred_at": "2026-11-18T08:18:11.774464+00:00",
+      "event_type": "worker.decision",
+      "data": {
+        "task_id": 1,
+        "action": "complete",
+        "llm_called": false,
+        "retried": false,
+        "request_plan_change": false
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 13,
+      "occurred_at": "2026-11-18T08:18:11.781498+00:00",
+      "event_type": "worker.attempt",
+      "data": {
+        "task_id": 2,
+        "tool": "virustotal_url",
+        "attempt": 1
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 14,
+      "occurred_at": "2026-11-18T08:18:11.787243+00:00",
+      "event_type": "tool.requested",
+      "data": {
+        "tool": "virustotal_url",
+        "target_scope": "url"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 15,
+      "occurred_at": "2026-11-18T08:18:15.439590+00:00",
+      "event_type": "tool.finished",
+      "data": {
+        "tool": "virustotal_url",
+        "outcome": "NO_RECORD",
+        "duration_ms": 3658,
+        "ok": false
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 16,
+      "occurred_at": "2026-11-18T08:18:15.439590+00:00",
+      "event_type": "error.handled",
+      "data": {
+        "code": "NO_RECORD",
+        "handling": "continue"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 17,
+      "occurred_at": "2026-11-18T08:18:15.460907+00:00",
+      "event_type": "worker.decision",
+      "data": {
+        "task_id": 2,
+        "action": "request_new_plan",
+        "llm_called": false,
+        "retried": false,
+        "request_plan_change": true,
+        "outcome": "NO_RECORD"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 18,
+      "occurred_at": "2026-11-18T08:18:15.466910+00:00",
+      "event_type": "audit.checked",
+      "data": {
+        "status": "verified",
+        "request_plan_change": false,
+        "llm_called": false,
+        "revision": 0
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 19,
+      "occurred_at": "2026-11-18T08:18:15.471910+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "execute",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 20,
+      "occurred_at": "2026-11-18T08:18:15.476370+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "judge"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 21,
+      "occurred_at": "2026-11-18T08:18:15.476370+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "judge",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 22,
+      "occurred_at": "2026-11-18T08:18:15.490400+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "replan"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 23,
+      "occurred_at": "2026-11-18T08:18:15.490400+00:00",
+      "event_type": "replan.decided",
+      "data": {
+        "performed": true,
+        "reason": "WORKER_REQUESTED_CHANGE",
+        "tool": "urlscan_history",
+        "count": 1,
+        "source": "rules"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 24,
+      "occurred_at": "2026-11-18T08:18:15.490400+00:00",
+      "event_type": "planner.task",
+      "data": {
+        "task_id": 101,
+        "revision": 1,
+        "tool": "urlscan_history",
+        "days": 1,
+        "fixed_url": true,
+        "fixed_days": true
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 25,
+      "occurred_at": "2026-11-18T08:18:15.490400+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "replan",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 26,
+      "occurred_at": "2026-11-18T08:18:15.506281+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "execute"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 27,
+      "occurred_at": "2026-11-18T08:18:15.506281+00:00",
+      "event_type": "worker.attempt",
+      "data": {
+        "task_id": 101,
+        "tool": "urlscan_history",
+        "attempt": 1,
+        "days": 1
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 28,
+      "occurred_at": "2026-11-18T08:18:15.506281+00:00",
+      "event_type": "tool.requested",
+      "data": {
+        "tool": "urlscan_history",
+        "target_scope": "host",
+        "days": 1
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 29,
+      "occurred_at": "2026-11-18T08:18:16.749357+00:00",
+      "event_type": "tool.finished",
+      "data": {
+        "tool": "urlscan_history",
+        "outcome": "NO_CANDIDATES",
+        "duration_ms": 1232,
+        "ok": true
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 30,
+      "occurred_at": "2026-11-18T08:18:16.759377+00:00",
+      "event_type": "worker.decision",
+      "data": {
+        "task_id": 101,
+        "action": "request_new_plan",
+        "llm_called": false,
+        "retried": false,
+        "request_plan_change": true,
+        "outcome": "NO_CANDIDATES"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 31,
+      "occurred_at": "2026-11-18T08:18:16.762374+00:00",
+      "event_type": "audit.checked",
+      "data": {
+        "status": "verified",
+        "request_plan_change": false,
+        "llm_called": false,
+        "revision": 1
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 32,
+      "occurred_at": "2026-11-18T08:18:16.766374+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "execute",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 33,
+      "occurred_at": "2026-11-18T08:18:16.768374+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "judge"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 34,
+      "occurred_at": "2026-11-18T08:18:16.771823+00:00",
+      "event_type": "replan.decided",
+      "data": {
+        "performed": false,
+        "reason": "REPLAN_LIMIT",
+        "count": 1,
+        "source": "rules"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 35,
+      "occurred_at": "2026-11-18T08:18:16.774183+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "judge",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 36,
+      "occurred_at": "2026-11-18T08:18:16.774183+00:00",
+      "event_type": "node.entered",
+      "data": {
+        "node": "respond"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 37,
+      "occurred_at": "2026-11-18T08:18:16.774183+00:00",
+      "event_type": "response.generated",
+      "data": {
+        "status": "INSUFFICIENT_EVIDENCE"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 38,
+      "occurred_at": "2026-11-18T08:18:16.774183+00:00",
+      "event_type": "node.finished",
+      "data": {
+        "node": "respond",
+        "status": "completed"
+      }
+    },
+    {
+      "run_id": "22f6b3770aef425398782fb6311257c0",
+      "sequence": 39,
+      "occurred_at": "2026-11-18T08:18:16.790692+00:00",
+      "event_type": "run.finished",
+      "data": {
+        "status": "completed",
+        "replans": 1
+      }
+    }
+  ]
+}

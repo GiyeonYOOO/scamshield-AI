@@ -1,0 +1,126 @@
+{
+  "run_id": "42c9449b096e452aa490a8439c2e65de",
+  "events": [
+    {
+      "run_id": "42c9449b096e452aa490a8439c2e65de",
+      "sequence": 1,
+      "occurred_at": "2026-11-18T08:30:53.250528+00:00",
+      "event_type": "run.started",
+      "data": {
+        "max_replans": 2
+      }
+    },
+    {
+      "run_id": "42c9449b096e452aa490a8439c2e65de",
+      "sequence": 2,
+      "occurred_at": "2026-11-18T08:30:53.250528+00:00",
+      "event_type": "planner.task",
+      "data": {
+        "task_id": 1,
+        "revision": 0,
+        "tool": "urlscan_history",
+        "days": 7,
+        "fixed_url": true,
+        "fixed_days": true
+      }
+    },
+    {
+      "run_id": "42c9449b096e452aa490a8439c2e65de",
+      "sequence": 3,
+      "occurred_at": "2026-11-18T08:30:53.264274+00:00",
+      "event_type": "worker.attempt",
+      "data": {
+        "task_id": 1,
+        "tool": "urlscan_history",
+        "attempt": 1,
+        "days": 7
+      }
+    },
+    {
+      "run_id": "42c9449b096e452aa490a8439c2e65de",
+      "sequence": 4,
+      "occurred_at": "2026-11-18T08:30:53.267784+00:00",
+      "event_type": "tool.requested",
+      "data": {
+        "tool": "urlscan_history",
+        "days": 7
+      }
+    },
+    {
+      "run_id": "42c9449b096e452aa490a8439c2e65de",
+      "sequence": 5,
+      "occurred_at": "2026-11-18T08:30:53.270783+00:00",
+      "event_type": "tool.finished",
+      "data": {
+        "tool": "urlscan_history",
+        "outcome": "NO_CANDIDATES",
+        "duration_ms": 1,
+        "ok": true
+      }
+    },
+    {
+      "run_id": "42c9449b096e452aa490a8439c2e65de",
+      "sequence": 6,
+      "occurred_at": "2026-11-18T08:30:53.272782+00:00",
+      "event_type": "worker.attempt",
+      "data": {
+        "task_id": 1,
+        "tool": "urlscan_history",
+        "attempt": 2,
+        "days": 7
+      }
+    },
+    {
+      "run_id": "42c9449b096e452aa490a8439c2e65de",
+      "sequence": 7,
+      "occurred_at": "2026-11-18T08:30:53.275783+00:00",
+      "event_type": "tool.requested",
+      "data": {
+        "tool": "urlscan_history",
+        "days": 7
+      }
+    },
+    {
+      "run_id": "42c9449b096e452aa490a8439c2e65de",
+      "sequence": 8,
+      "occurred_at": "2026-11-18T08:30:53.278786+00:00",
+      "event_type": "tool.finished",
+      "data": {
+        "tool": "urlscan_history",
+        "outcome": "NO_CANDIDATES",
+        "duration_ms": 1,
+        "ok": true
+      }
+    },
+    {
+      "run_id": "42c9449b096e452aa490a8439c2e65de",
+      "sequence": 9,
+      "occurred_at": "2026-11-18T08:30:53.281787+00:00",
+      "event_type": "audit.checked",
+      "data": {
+        "status": "anomaly",
+        "code": "DUPLICATE_CALL",
+        "revision": 0
+      }
+    },
+    {
+      "run_id": "42c9449b096e452aa490a8439c2e65de",
+      "sequence": 10,
+      "occurred_at": "2026-11-18T08:30:53.284786+00:00",
+      "event_type": "response.generated",
+      "data": {
+        "status": "INSUFFICIENT_EVIDENCE"
+      }
+    },
+    {
+      "run_id": "42c9449b096e452aa490a8439c2e65de",
+      "sequence": 11,
+      "occurred_at": "2026-11-18T08:30:53.287786+00:00",
+      "event_type": "run.finished",
+      "data": {
+        "status": "completed",
+        "replans": 0
+      }
+    }
+  ]
+}

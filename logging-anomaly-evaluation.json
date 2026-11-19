@@ -1,0 +1,43 @@
+{
+  "run_id": "42c9449b096e452aa490a8439c2e65de",
+  "status": "warning",
+  "warnings": [
+    {
+      "code": "DUPLICATE_CALL",
+      "location": {
+        "revision": 0,
+        "sequence": 7
+      },
+      "reason": "동일 Tool과 동일 조회 인자로 반복 호출했습니다",
+      "evidence_event_ids": [
+        "42c9449b096e452aa490a8439c2e65de:2",
+        "42c9449b096e452aa490a8439c2e65de:3",
+        "42c9449b096e452aa490a8439c2e65de:4",
+        "42c9449b096e452aa490a8439c2e65de:5",
+        "42c9449b096e452aa490a8439c2e65de:6",
+        "42c9449b096e452aa490a8439c2e65de:7",
+        "42c9449b096e452aa490a8439c2e65de:8",
+        "42c9449b096e452aa490a8439c2e65de:9"
+      ]
+    }
+  ],
+  "complete": true,
+  "reason": null,
+  "diagnosis": {
+    "status": "completed",
+    "component": "Planner",
+    "evidence_code": "DUPLICATE_CALL",
+    "evidence_event_ids": [
+      "42c9449b096e452aa490a8439c2e65de:2",
+      "42c9449b096e452aa490a8439c2e65de:3",
+      "42c9449b096e452aa490a8439c2e65de:4",
+      "42c9449b096e452aa490a8439c2e65de:5",
+      "42c9449b096e452aa490a8439c2e65de:6",
+      "42c9449b096e452aa490a8439c2e65de:7",
+      "42c9449b096e452aa490a8439c2e65de:8",
+      "42c9449b096e452aa490a8439c2e65de:9"
+    ],
+    "text": "Planner 단계의 문제 가능성이 있습니다. 실행 기록에서 동일 Tool과 동일 조회 인자로 반복 호출했습니다. 실행 전 이전 호출 결과를 재사용하도록 점검하세요.",
+    "error_code": null
+  }
+}
