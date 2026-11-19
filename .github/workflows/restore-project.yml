@@ -1,0 +1,88 @@
+name: Restore SCAMSHIELD AI project structure
+on:
+  push:
+    branches: [main]
+    paths:
+      - SCAMSHIELD_AI_Render_Free.zip
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore files from the verified deployment ZIP
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path, PurePosixPath
+          from zipfile import ZipFile
+          import shutil
+          import tempfile
+          import stat
+
+          archive = Path('SCAMSHIELD_AI_Render_Free.zip')
+          if not archive.is_file():
+              raise SystemExit('Missing SCAMSHIELD_AI_Render_Free.zip')
+
+          required = {
+              'render.yaml',
+              'requirements.txt',
+              'app/scamshield_api.py',
+              'app/scamshield/agent.py',
+              'app/scamshield/planner.py',
+              'frontend/index.html',
+              'frontend/app.js',
+              'tests/test_deployment.py',
+          }
+          allowed_roots = {
+              'api_validation', 'app', 'docs', 'frontend', 'tests',
+              '.env.example', '.gitignore', 'README.md',
+              'index.html', 'render.yaml', 'requirements.txt',
+              'step1_hello.py', 'step2_params.py', 'step3_body.py',
+              'step4_response.py', 'step5_crud.py', 'tools_start.py',
+          }
+          with ZipFile(archive) as z:
+              items = [i for i in z.infolist() if not i.is_dir()]
+              names = {i.filename for i in items}
+              if not required.issubset(names) or len(items) > 150 or sum(i.file_size for i in items) > 15000000:
+                  raise SystemExit('Unexpected archive contents')
+              for item in items:
+                  p = PurePosixPath(item.filename)
+                  if (p.is_absolute() or '..' in p.parts or '\\' in item.filename
+                          or p.parts[0] not in allowed_roots or
+                          (p.name.startswith('.env') and item.filename != '.env.example')
+                          or stat.S_IFMT(item.external_attr >> 16) == stat.S_IFLNK):
+                      raise SystemExit('Unsafe archive entry: ' + item.filename)
+              with tempfile.TemporaryDirectory() as tmp:
+                  dest = Path(tmp)
+                  for item in items:
+                      target = dest.joinpath(*PurePosixPath(item.filename).parts)
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      with z.open(item) as src, target.open('wb') as out:
+                          shutil.copyfileobj(src, out)
+                  root = Path.cwd()
+                  for p in root.iterdir():
+                      if p.name in {'.git', '.github', archive.name}:
+                          continue
+                      if p.is_dir():
+                          shutil.rmtree(p)
+                      else:
+                          p.unlink()
+                  for p in dest.iterdir():
+                      shutil.move(str(p), str(root / p.name))
+          archive.unlink()
+          print('Restored SCAMSHIELD AI folder layout.')
+          PY
+      - name: Commit restored source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "fix: restore SCAMSHIELD AI project directories for Render"
+            git push
+          fi
