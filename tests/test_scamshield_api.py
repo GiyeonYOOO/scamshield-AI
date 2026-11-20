@@ -1,5 +1,7 @@
+from contextlib import closing
 from datetime import datetime, timezone
 from pathlib import Path
+import sqlite3
 from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
@@ -35,8 +37,8 @@ class ScamshieldApiTests(unittest.TestCase):
         self.created_agents = []
         self.client = self.new_client()
 
-    def new_client(self):
-        application = create_app(db_path=self.path, agent_factory=self.create_agent)
+    def new_client(self, path=None):
+        application = create_app(db_path=path or self.path, agent_factory=self.create_agent)
         client = TestClient(application, base_url="https://testserver")
         self.addCleanup(client.__exit__, None, None, None)
         return client.__enter__()
@@ -63,6 +65,7 @@ class ScamshieldApiTests(unittest.TestCase):
         self.assertIn("HttpOnly", first.headers["set-cookie"])
         self.assertIn("SameSite=strict", first.headers["set-cookie"])
         self.assertIn("Secure", first.headers["set-cookie"])
+        token = self.client.cookies.get(COOKIE_NAME)
         self.assertEqual(first.headers["cache-control"], "no-store")
         result = first.json()
         self.assertEqual(result["status"], "completed")
@@ -71,6 +74,7 @@ class ScamshieldApiTests(unittest.TestCase):
         self.assertEqual(result["run_id"], result["plan_draft"]["analysis_id"])
         follow_up = self.analyze(message="같은 링크인데 최근 24시간 이내 기록만 확인해 주세요.")
         self.assertNotEqual(follow_up["run_id"], result["run_id"])
+        self.assertEqual(self.client.cookies.get(COOKIE_NAME), token)
         self.assertEqual(follow_up["analysis"]["conditions"], {"max_age_hours": 24})
         self.assertEqual(self.provider.call_args.args[1], URL)
         self.assertEqual(len(self.created_agents), 1)
@@ -144,10 +148,52 @@ class ScamshieldApiTests(unittest.TestCase):
     def test_unauthenticated_and_forged_cookies_and_cross_origin_requests(self):
         self.assertEqual(self.client.get("/api/logs?session_id=anything").status_code, 401)
         self.client.cookies.set(COOKIE_NAME, "a" * 43)
-        self.assertEqual(self.client.post("/api/chat", json={"message": URL}).status_code, 401)
+        for route in ("/api/logs", "/api/plans"):
+            unauthorized = self.client.get(route)
+            self.assertEqual(unauthorized.status_code, 401)
+            self.assertNotIn("set-cookie", unauthorized.headers)
         self.client.cookies.clear()
         response = self.client.post("/api/chat", json={"message": URL}, headers={"Origin": "https://other.test"})
         self.assertEqual(response.status_code, 403)
+        self.provider.assert_not_called()
+
+    def test_expired_session_is_rotated_without_transferring_old_data(self):
+        old_run = self.analyze()["run_id"]
+        saved = self.client.post("/api/plans", json=self.plan_body(old_run))
+        self.assertEqual(saved.status_code, 201)
+        plan_id = saved.json()["plan"]["id"]
+        old_cookie = self.client.cookies.get(COOKIE_NAME)
+        with closing(sqlite3.connect(self.path)) as db, db:
+            db.execute("UPDATE browser_sessions SET expires_at = 0")
+        self.assertEqual(self.client.get("/api/logs").status_code, 401)
+        response = self.client.post("/api/chat", json={"message": URL})
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertNotEqual(self.client.cookies.get(COOKIE_NAME), old_cookie)
+        for attribute in ("HttpOnly", "Secure", "SameSite=strict", "Path=/api"):
+            self.assertIn(attribute, response.headers["set-cookie"])
+        self.assertEqual(self.client.get(f"/api/logs/{old_run}").status_code, 404)
+        self.assertEqual(self.client.get(f"/api/plans/{plan_id}").status_code, 404)
+        self.assertEqual(self.client.get("/api/plans").json(), [])
+        self.assertEqual(self.client.get("/api/logs").json()[0]["run_id"], response.json()["run_id"])
+
+    def test_missing_session_after_storage_reset_recovers_and_rotates_cookie(self):
+        original = self.analyze()
+        original_cookie = self.client.cookies.get(COOKIE_NAME)
+        restarted = self.new_client(self.path.with_name("reset.sqlite"))
+        restarted.cookies.update(self.client.cookies)
+        self.assertEqual(restarted.get("/api/logs").status_code, 401)
+        result = self.analyze(restarted)
+        self.assertNotEqual(restarted.cookies.get(COOKIE_NAME), original_cookie)
+        self.assertEqual(restarted.get(f"/api/logs/{original['run_id']}").status_code, 404)
+        self.assertEqual(restarted.get(f"/api/logs/{result['run_id']}").status_code, 200)
+        self.assertEqual(self.client.get(f"/api/logs/{original['run_id']}").status_code, 200)
+
+    def test_malformed_cookie_recovers_during_text_analysis(self):
+        response = self.client.post("/api/chat", headers={"Cookie": f"{COOKIE_NAME}=invalid"},
+                                    json={"message": "지금 인증번호를 알려주세요", "target_type": "text"})
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertIn("set-cookie", response.headers)
+        self.assertEqual(response.json()["analysis"]["status"], "SUSPICIOUS")
         self.provider.assert_not_called()
 
     def test_provider_failure_returns_partial_and_unexpected_error_is_sanitized(self):

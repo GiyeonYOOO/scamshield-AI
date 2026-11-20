@@ -177,10 +177,10 @@ def create_app(*, db_path=None, secure_cookies=None, agent_factory=None) -> Fast
             raise ApiError(422, "INVALID_URL", "인증 정보가 없는 공개 HTTP(S) URL을 입력하세요.")
         state = request.app.state
         cookie = request.cookies.get(COOKIE_NAME)
-        if cookie is None:
+        owner = state.sessions.resolve(cookie)
+        token = None
+        if owner is None:
             token, owner = state.sessions.create()
-        else:
-            token, owner = None, required_owner(request, cookie)
 
         call_context = body.call_context if body.target_type == "text" else None
         message = body.message

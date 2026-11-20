@@ -79,8 +79,8 @@ async function api(path, method = "GET", data) {
   const payload = await response.json().catch(() => null);
   if (response.ok && payload) return payload;
   const code = payload?.error?.code;
-  if (response.status === 401) {
-    const error = new Error("유효한 세션이 없습니다. 위험 분석에서 요청을 보내 세션을 시작하세요. 만료된 세션 오류가 계속되면 이 사이트의 쿠키를 지우고 다시 시도하세요.");
+  if (response.status === 401 && code === "SESSION_REQUIRED") {
+    const error = new Error("이용 세션이 끝났거나 초기화됐어요. 위험 분석을 시작하면 새 세션이 열립니다.");
     error.code = code;
     throw error;
   }
