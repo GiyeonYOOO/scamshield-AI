@@ -330,6 +330,14 @@ def create_app(*, db_path=None, secure_cookies=None, agent_factory=None) -> Fast
     def dashboard_styles():
         return FileResponse(FRONTEND / "styles.css", media_type="text/css")
 
+    @application.get("/assets/investigation.js", include_in_schema=False)
+    def investigation_script():
+        return FileResponse(FRONTEND / "investigation.js", media_type="text/javascript")
+
+    @application.get("/assets/investigation.css", include_in_schema=False)
+    def investigation_styles():
+        return FileResponse(FRONTEND / "investigation.css", media_type="text/css")
+
     @application.get("/assets/shieldy.jpg", include_in_schema=False)
     def dashboard_mascot():
         return FileResponse(FRONTEND / "shieldy.jpg", media_type="image/jpeg")

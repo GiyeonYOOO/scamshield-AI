@@ -107,6 +107,7 @@ small { font-size: .8rem; }
 .message-warning h2, .evidence-sources h2 { margin-bottom: 5px; font-size: 1.05rem; }
 
 .workspace-grid { display: grid; grid-template-columns: minmax(0, .88fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+#analysis-investigation { min-inline-size: 0; scroll-margin-block-start: 16px; }
 .stack { display: grid; min-width: 0; gap: 20px; }
 .panel { min-width: 0; padding: clamp(18px, 3vw, 30px); border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow); }
 .section-heading { margin-bottom: 18px; }

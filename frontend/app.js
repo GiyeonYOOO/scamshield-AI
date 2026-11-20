@@ -1,3 +1,5 @@
+import {mountInvestigation} from "/assets/investigation.js?v=3";
+
 const $ = (id) => document.getElementById(id);
 const el = (tag, text, className) => {
   const node = document.createElement(tag);
@@ -496,6 +498,7 @@ const analysisInputs = {
 const analysisDrafts = {url: "", text: ""};
 const analysisOptIns = {url: false, text: false};
 let analysisViewVersion = 0;
+let investigation;
 message.addEventListener("input", () => {
   $("counter").textContent = `${message.value.length} / 4000`;
   message.removeAttribute("aria-invalid");
@@ -520,6 +523,8 @@ function selectAnalysisInput(type) {
     message.value = analysisDrafts[type];
     message.dispatchEvent(new Event("input"));
     analysisViewVersion += 1;
+    investigation?.dispose();
+    investigation = undefined;
     $("analysis-result").hidden = true;
     feedback($("analysis-feedback"));
     empty($("trace"), "아직 실행 기록이 없습니다.");
@@ -543,6 +548,8 @@ form.addEventListener("submit", async (event) => {
     return;
   }
   submit.disabled = true;
+  investigation?.dispose();
+  investigation = undefined;
   $("analysis-result").hidden = true;
   feedback($("analysis-feedback"), "분석 요청을 처리 중입니다. 완료 후 검증 결과를 표시합니다.");
   const trace = $("trace");
@@ -558,13 +565,18 @@ form.addEventListener("submit", async (event) => {
     });
     if (version !== analysisViewVersion) return;
     renderResult(data);
+    investigation = mountInvestigation($("analysis-investigation"), data, target, {
+      statuses, scopes, toolName, label, when, describeEvent, save: (draft) => openPlanEditor({draft}),
+    });
     feedback($("analysis-feedback"), data.status === "partial" ? "분석 완료 · 일부 조회 실패" : "분석 완료", data.status === "partial" ? "warn" : "");
     try {
       const log = await api(`/api/logs/${encodeURIComponent(data.run_id)}`);
       if (version !== analysisViewVersion) return;
+      investigation.update(log.events);
       renderTimeline(trace, log.events);
     } catch (error) {
       if (version !== analysisViewVersion) return;
+      investigation.update(null, error.code === "LOG_NOT_FOUND" ? "저장된 실행 로그 없음" : "실행 로그 조회 실패");
       empty(trace, error.code === "LOG_NOT_FOUND" ? "저장된 실행 로그 없음" : "실행 로그 조회 실패",
         error.code === "LOG_NOT_FOUND" ? "분석 결과는 위에서 확인할 수 있어요." : error.message);
     }
