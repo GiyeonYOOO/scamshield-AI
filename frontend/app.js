@@ -1,4 +1,4 @@
-import {mountInvestigation} from "/assets/investigation.js?v=5";
+import {mountInvestigation} from "/assets/investigation.js?v=6";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, text, className) => {
@@ -252,8 +252,19 @@ function renderSupplement(result, area, mode) {
   if (result.follow_up) panels.push(followUpPanel(result.run_id, result.follow_up));
   const context = analysis.text_assessment?.context ?? analysis.message_context;
   if (context) panels.push(messageContextPanel(context, mode));
+  const [verdict, tone] = statuses[analysis.status] ?? statuses.INSUFFICIENT_EVIDENCE;
+  const conclusion = resultPanel("최종 결론", `analysis-conclusion ${tone}`);
+  const takeaway = {
+    KNOWN_RISK: "접속하거나 요청에 응하기 전에 공식 연락처로 확인하세요.",
+    SUSPICIOUS: "요청에 응하기 전에 직접 찾은 공식 연락처로 확인하세요.",
+    NO_KNOWN_MATCH: "의심이 남으면 받은 링크 대신 공식 앱이나 홈페이지에서 직접 확인하세요.",
+    INSUFFICIENT_EVIDENCE: "확인할 수 있는 근거가 부족해요. 공식 연락처로 다시 확인하세요.",
+  }[analysis.status];
+  conclusion.append(el("strong", verdict, "analysis-conclusion-verdict"));
+  if (takeaway) conclusion.append(el("p", takeaway));
+  panels.push(conclusion);
   area.replaceChildren(...panels);
-  area.hidden = !panels.length;
+  area.hidden = false;
 }
 
 function describeEvent({event_type: type, data: d}) {
@@ -567,7 +578,7 @@ function openPlanEditor(value = {}) {
   $("plan-dialog-title").textContent = plan ? "예방 글 수정" : "예방 글 쓰기";
   $("save-plan").textContent = plan ? "변경 저장" : "저장";
   $("edit-actions").hidden = Boolean(draft);
-  $("plan-schedule").hidden = !plan && !draft;
+  $("plan-schedule").hidden = !plan;
   $("draft-actions").hidden = !draft;
   $("draft-actions").replaceChildren(...(draft ? [el("h3", "예방 행동 단계"), actionList(draft.actions)] : []));
   if (plan) {
@@ -612,7 +623,7 @@ planForm.addEventListener("submit", async (event) => {
         throw new Error("내용을 1~20줄로 입력하세요. 한 줄은 500자까지 입력할 수 있습니다.");
       }
     } else body.analysis_id = draft.analysis_id;
-    if (plan || draft) {
+    if (plan) {
       const schedule = Object.fromEntries(scheduleFields.map((field) => [field, input.get(field)]));
       const values = Object.values(schedule);
       if (plan?.execution_date || values.some(Boolean)) {

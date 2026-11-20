@@ -149,14 +149,16 @@ export function mountInvestigation(root, result, target, labels) {
   let playhead = null, timer = 0, disposed = false;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const header = el("header", null, "investigation-header");
-  const heading = el("h2", "Threat Investigation Canvas");
-  header.append(heading, el("p", "AI 위협 조사 · 분석 근거와 Agent 실행 흐름"));
+  header.append(el("h2", "AI 위험 조사 · 분석 근거와 Agent 실행 흐름"));
   const banner = el("div", null, "investigation-banner");
   const verdict = el("strong", model.verdict, `investigation-verdict ${model.tone}`);
-  banner.append(verdict, el("p", target === "call" ? "통화 정황을 바탕으로 확인한 결과입니다."
-    : "탐지 미일치는 안전 확정을 의미하지 않습니다."),
-    el("p", `분석 ID · ${result.run_id}`, "investigation-id"));
-  if (result.status === "partial") banner.append(el("p", "일부 조회를 완료하지 못했어요."));
+  const summary = el("div", null, "investigation-summary");
+  const id = el("p", `분석 ID · ${result.run_id}`, "investigation-id");
+  id.title = "이 분석과 연결된 실행 기록을 식별하는 번호";
+  summary.append(verdict, el("p", target === "call" ? "통화 정황을 바탕으로 확인한 결과입니다."
+    : "위험 목록에 없더라도 안전이 확인된 것은 아니에요."), id);
+  if (result.status === "partial") summary.append(el("p", "일부 조회를 완료하지 못했어요."));
+  banner.append(summary);
   if (result.plan_draft) banner.append(control("예방 계획 저장", () => labels.save(result.plan_draft)));
   else if (labels.saveActions) banner.append(control("예방 계획 저장", labels.saveActions));
   if (model.actions.length) {
