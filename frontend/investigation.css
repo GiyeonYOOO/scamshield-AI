@@ -18,7 +18,7 @@
 .investigation h3 { font-size: 1rem; margin: 0 0 8px; }
 .investigation h4 { margin: 8px 0 4px; font-size: .88rem; }
 .investigation p, .investigation li, .investigation dd { color: var(--canvas-muted); font-size: .83rem; }
-.investigation-header { margin-bottom: 12px; }
+.investigation-header { margin-bottom: 14px; padding-inline-start: 12px; border-inline-start: 3px solid var(--canvas-accent); }
 .investigation-header p { margin-top: 4px; }
 .investigation button, .investigation select {
   min-height: 32px; padding: 4px 9px; border: 1px solid var(--canvas-line); border-radius: 6px;
@@ -48,7 +48,7 @@
 .investigation-viewport { overflow: auto; max-height: 34rem; border: 1px solid #253d53; border-radius: 8px; }
 .investigation-graph {
   position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px;
-  min-height: 13rem; padding: 12px 8px; isolation: isolate;
+  min-height: 16rem; padding: 14px 9px; isolation: isolate;
   background: radial-gradient(circle, #3b5b78 1px, #0c1827 1px) 0 0 / 15px 15px;
 }
 .investigation-column { z-index: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 9px; }
@@ -61,6 +61,12 @@
   color: #eafaff; border-color: #43899a; background: #122939; font-size: .77rem;
 }
 .investigation-node small { display: block; margin-top: 2px; color: #c5d8e9; font-size: .72rem; }
+.investigation-node-icon { display: block; margin-bottom: 2px; color: var(--canvas-accent); font-weight: 800; }
+.investigation .kind-input { border-color: #54bbc9; border-radius: 14px; background: #153746; }
+.investigation .kind-verdict { border-radius: 14px; }
+.kind-signal .investigation-node-icon { color: #c4abff; }
+.kind-evidence .investigation-node-icon, .kind-verdict .investigation-node-icon { color: #ffd08a; }
+.kind-action .investigation-node-icon { color: #9ae9bd; }
 .investigation .kind-signal { border-color: #886cce; background: #252346; }
 .investigation .kind-evidence { border-color: #ac8752; background: #302722; }
 .investigation .kind-verdict, .investigation .investigation-node.warn { border-color: #ad8348; background: #33281f; }

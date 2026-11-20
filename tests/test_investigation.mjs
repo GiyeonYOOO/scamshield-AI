@@ -19,6 +19,17 @@ const response = (overrides = {}) => ({
   },
 });
 
+test("phone keeps selected call facts and prevention actions without inventing URL lookups", () => {
+  const model = buildInvestigation(response({local_signals: ["인증번호 요구"], actions: []}), "call",
+    [ev(1, "run.started"), ev(5, "response.generated")],
+    {...labels, callFacts: [["연락 방식", "영상통화"]], callActions: ["공식 번호 확인"]});
+  assert.equal(model.mode, "전화·영상통화");
+  assert.deepEqual(model.nodes[0].facts.at(-1), ["연락 방식", "영상통화"]);
+  assert.deepEqual(model.nodes.find((node) => node.id === "actions").facts, [["권장 행동", "공식 번호 확인"]]);
+  assert.ok(!model.nodes.some((node) => node.kind === "lookup"));
+  assert.deepEqual(model.nodes.find((node) => node.id === "verdict").seqs, [5]);
+});
+
 test("matches an observation to an exact unique tool outcome and keeps event order", () => {
   const result = response({
     tool_outcomes: {google_safe_browsing: "NO_MATCH", virustotal_url: "REPORT"},

@@ -8,8 +8,8 @@
   <title>SCAMSHIELD AI · 디지털 사기 예방</title>
   <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="/assets/styles.css?v=investigation-release">
-  <link rel="stylesheet" href="/assets/investigation.css?v=3">
-  <script type="module" src="/assets/app.js?v=investigation-3"></script>
+  <link rel="stylesheet" href="/assets/investigation.css?v=4">
+  <script type="module" src="/assets/app.js?v=investigation-4"></script>
 </head>
 <body>
   <a class="skip" href="#main">본문으로 건너뛰기</a>
@@ -121,8 +121,8 @@
               <button id="analyze" class="primary" type="submit">위험 분석 시작 <span aria-hidden="true">→</span></button>
             </form>
           </section>
-          <section id="analysis-result" class="panel result-panel" aria-label="위험 분석 결과" hidden></section>
           <section id="analysis-investigation" class="investigation" aria-label="AI 위협 조사" hidden></section>
+          <section id="analysis-result" class="panel result-panel" aria-label="위험 분석 결과" hidden></section>
           <section class="panel timeline-panel" aria-labelledby="trace-title">
             <div class="section-heading"><h2 id="trace-title">분석 실행 기록</h2></div>
             <div id="trace" aria-live="polite"><div class="empty"><strong>아직 실행 기록이 없습니다.</strong></div></div>
@@ -179,6 +179,7 @@
           <p class="row-hint">선택한 상황을 분석해요. 목소리나 얼굴이 AI로 만들어졌는지는 판별할 수 없어요.</p>
           <button id="check-call" class="primary" type="submit">대응 방법 확인</button>
         </form>
+        <section id="call-investigation" class="investigation" aria-label="전화 AI 위협 조사" hidden></section>
         <section id="call-result" class="panel result-panel" aria-labelledby="call-result-title" hidden></section>
       </div>
     </section>

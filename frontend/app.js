@@ -1,4 +1,4 @@
-import {mountInvestigation} from "/assets/investigation.js?v=3";
+import {mountInvestigation} from "/assets/investigation.js?v=4";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, text, className) => {
@@ -499,6 +499,18 @@ const analysisDrafts = {url: "", text: ""};
 const analysisOptIns = {url: false, text: false};
 let analysisViewVersion = 0;
 let investigation;
+let callInvestigation;
+
+function openInvestigation(element, result, target, extra = {}) {
+  return mountInvestigation($(element), result, target, {
+    statuses, scopes, toolName, label, when, describeEvent,
+    save: (draft) => openPlanEditor({draft}), ...extra,
+  });
+}
+
+function investigationLogFailure(error) {
+  return error.code === "LOG_NOT_FOUND" ? "저장된 실행 로그 없음" : "실행 로그 조회 실패";
+}
 message.addEventListener("input", () => {
   $("counter").textContent = `${message.value.length} / 4000`;
   message.removeAttribute("aria-invalid");
@@ -565,9 +577,7 @@ form.addEventListener("submit", async (event) => {
     });
     if (version !== analysisViewVersion) return;
     renderResult(data);
-    investigation = mountInvestigation($("analysis-investigation"), data, target, {
-      statuses, scopes, toolName, label, when, describeEvent, save: (draft) => openPlanEditor({draft}),
-    });
+    investigation = openInvestigation("analysis-investigation", data, target);
     feedback($("analysis-feedback"), data.status === "partial" ? "분석 완료 · 일부 조회 실패" : "분석 완료", data.status === "partial" ? "warn" : "");
     try {
       const log = await api(`/api/logs/${encodeURIComponent(data.run_id)}`);
@@ -576,7 +586,7 @@ form.addEventListener("submit", async (event) => {
       renderTimeline(trace, log.events);
     } catch (error) {
       if (version !== analysisViewVersion) return;
-      investigation.update(null, error.code === "LOG_NOT_FOUND" ? "저장된 실행 로그 없음" : "실행 로그 조회 실패");
+      investigation.update(null, investigationLogFailure(error));
       empty(trace, error.code === "LOG_NOT_FOUND" ? "저장된 실행 로그 없음" : "실행 로그 조회 실패",
         error.code === "LOG_NOT_FOUND" ? "분석 결과는 위에서 확인할 수 있어요." : error.message);
     }
@@ -619,6 +629,8 @@ callForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const submit = $("check-call");
   if (submit.disabled) return;
+  callInvestigation?.dispose();
+  callInvestigation = undefined;
   const input = new FormData(callForm);
   const {title, actions} = callGuidance(Object.fromEntries(input));
   const panel = resultPanel(title, "guidance");
@@ -636,6 +648,9 @@ callForm.addEventListener("submit", async (event) => {
   submit.disabled = true;
 
   const selected = (name) => callForm.elements[name].selectedOptions[0].textContent;
+  const callFacts = [["연락 방식", selected("channel")], ["상대가 주장한 관계", selected("contact")],
+    ["요구 내용", selected("request")], ["공식 경로 확인", selected("verification")]];
+  if (input.has("sent")) callFacts.push(["송금 여부", "이미 송금했다고 응답함"]);
   const description = `${selected("channel")}에서 상대가 ${selected("contact")}이라고 했어요. `
     + (input.get("request") === "other" ? "상대가 무엇을 요구했는지는 잘 모르겠어요. " : `${selected("request")} 요청을 받았어요. `)
     + `${selected("verification")}.`
@@ -668,6 +683,14 @@ callForm.addEventListener("submit", async (event) => {
     if (analysis.text_assessment?.context) panels.push(messageContextPanel(analysis.text_assessment.context, "call"));
     output.replaceChildren(...panels);
     if (restoreFocus && !output.closest("[hidden]")) resultTitle.focus();
+    callInvestigation = openInvestigation("call-investigation", result, "call", {callFacts, callActions: actions,
+      saveActions: () => openPlanEditor({actions})});
+    try {
+      const log = await api(`/api/logs/${encodeURIComponent(result.run_id)}`);
+      callInvestigation.update(log.events);
+    } catch (error) {
+      callInvestigation.update(null, investigationLogFailure(error));
+    }
   } catch {
     status.textContent = "추가 분석을 불러오지 못했어요. 위의 대응 방법을 먼저 확인하세요.";
   } finally {

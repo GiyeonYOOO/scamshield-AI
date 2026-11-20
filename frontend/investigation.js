@@ -1,6 +1,6 @@
 const svgNamespace = "http://www.w3.org/2000/svg";
 const completedOutcomes = new Set(["MATCH", "NO_MATCH", "REPORT", "NO_RECORD", "CANDIDATES", "NO_CANDIDATES"]);
-const categories = {all: "전체", signal: "문자 정황", lookup: "보안 조회", verdict: "AI 판단", action: "예방 행동"};
+const categories = {all: "전체", signal: "위험 정황", lookup: "보안 조회", verdict: "AI 판단", action: "예방 행동"};
 const eligibleEvents = new Set([
   "run.started", "node.entered", "node.finished", "planner.task", "worker.attempt", "worker.decision",
   "tool.requested", "tool.finished", "llm.decision", "message_context.finished", "audit.checked",
@@ -53,14 +53,17 @@ export function buildInvestigation(result, target, events, labels) {
     ...analysis.evidence.map((item) => item.tool),
     ...timeline.filter((e) => ["tool.requested", "tool.finished"].includes(e.event_type)).map((e) => e.data.tool),
   ].filter(Boolean));
-  const text = target === "text";
-  const mode = text ? "문자·메신저" : "URL";
+  const mode = {text: "문자·메신저", call: "전화·영상통화", url: "URL"}[target];
+  const inputSummary = {text: "문자 표현과 포함된 링크 검토", call: "선택한 통화 상황과 입력한 설명 검토",
+    url: "입력한 링크와 조회 조건 검토"}[target];
+  const inputFacts = [["입력 유형", mode], ["입력 요약", inputSummary], ...(labels.callFacts ?? [])];
+  const actions = labels.callActions ?? analysis.actions;
   const context = analysis.text_assessment?.context ?? analysis.message_context;
   const signals = [...new Set([...analysis.local_signals, ...(context?.signals ?? []).map((item) => item.label)])];
   const [verdict, tone] = labels.statuses[analysis.status] ?? labels.statuses.INSUFFICIENT_EVIDENCE;
   add({id: "input", kind: "input", column: 1, title: "분석 대상", subtitle: mode,
     at: -Infinity, seqs: timeline.filter((e) => e.event_type === "run.started" || isNode(e, "analyze")).map((e) => e.sequence),
-    facts: [["입력 유형", mode], ["입력 요약", text ? "문자 표현과 포함된 링크 검토" : "입력한 링크와 조회 조건 검토"]]});
+    facts: inputFacts});
   signals.forEach((signal, index) => {
     const id = `signal-${index}`;
     const local = analysis.local_signals.includes(signal);
@@ -119,13 +122,13 @@ export function buildInvestigation(result, target, events, labels) {
       ...(analysis.replans > 0 ? [["재계획", `${analysis.replans}회`]] : []),
       ["해석", "탐지 목록에 없더라도 안전하다고 확정할 수 없어요."]]});
   if (!analysis.evidence.some((item) => item.eligible)) connect("input", "verdict", true);
-  if (analysis.actions.length) {
-    add({id: "actions", kind: "action", column: 4, title: "예방 행동", subtitle: `${analysis.actions.length}개 권장 행동`,
+  if (actions.length) {
+    add({id: "actions", kind: "action", column: 4, title: "예방 행동", subtitle: `${actions.length}개 권장 행동`,
       seqs: Number.isFinite(responseAt) ? [responseAt] : [], at: responseAt,
-      facts: analysis.actions.map((action) => ["권장 행동", action])});
+      facts: actions.map((action) => ["권장 행동", action])});
     connect("verdict", "actions");
   }
-  return {nodes, edges, timeline, mode, signals, verdict, tone};
+  return {nodes, edges, timeline, mode, signals, verdict, tone, actions};
 }
 
 export function mountInvestigation(root, result, target, labels) {
@@ -138,10 +141,12 @@ export function mountInvestigation(root, result, target, labels) {
   header.append(heading, el("p", "AI 위협 조사 · 분석 근거와 Agent 실행 흐름"));
   const banner = el("div", null, "investigation-banner");
   const verdict = el("strong", model.verdict, `investigation-verdict ${model.tone}`);
-  banner.append(verdict, el("p", "탐지 미일치는 안전 확정을 의미하지 않습니다."),
+  banner.append(verdict, el("p", target === "call" ? "통화 정황을 바탕으로 확인한 결과입니다."
+    : "탐지 미일치는 안전 확정을 의미하지 않습니다."),
     el("p", `분석 ID · ${result.run_id}`, "investigation-id"));
   if (result.status === "partial") banner.append(el("p", "일부 조회를 완료하지 못했어요."));
   if (result.plan_draft) banner.append(control("예방 계획 저장", () => labels.save(result.plan_draft)));
+  else if (labels.saveActions) banner.append(control("예방 계획 저장", labels.saveActions));
 
   const layout = el("div", null, "investigation-layout");
   const overview = el("section", null, "investigation-card investigation-overview");
@@ -152,8 +157,8 @@ export function mountInvestigation(root, result, target, labels) {
     model.signals.forEach((signal) => list.append(el("li", safe(signal))));
     overview.append(list);
   } else overview.append(el("p", "표시할 정황 없음"));
-  if (result.analysis.actions.length) {
-    overview.append(el("h4", "권장 행동"), el("p", safe(result.analysis.actions[0])));
+  if (model.actions.length) {
+    overview.append(el("h4", "권장 행동"), el("p", safe(model.actions[0])));
   }
 
   const network = el("section", null, "investigation-card investigation-network");
@@ -286,6 +291,10 @@ export function mountInvestigation(root, result, target, labels) {
         renderDetails();
       });
       choice.className = `investigation-node kind-${node.visual ?? node.kind} ${node.tone ?? ""}`;
+      const icon = el("span", {input: "◎", signal: "◇", lookup: "⌕", evidence: "▤", verdict: "!", action: "✓"}[node.visual ?? node.kind],
+        "investigation-node-icon");
+      icon.setAttribute("aria-hidden", "true");
+      choice.prepend(icon);
       if (playhead !== null && !previous.has(node.id)) choice.classList.add("is-revealed");
       choice.append(el("small", safe(node.subtitle)));
       graphButtons.set(node.id, choice);
