@@ -117,10 +117,22 @@ export function buildInvestigation(result, target, events, labels) {
   });
   add({id: "verdict", kind: "verdict", column: 4, title: "종합 판단", subtitle: verdict, tone,
     seqs: verdictEvents.map((e) => e.sequence), at: responseAt,
-    facts: [["분석 상태", verdict], ["상태 코드", analysis.status],
+    facts: [["판단 근거", labels.verdictNote ?? analysis.message],
+      ...(analysis.provider_comparison ? [["공급자 비교", {
+        different: "공급자별 결과가 달라요. 각 근거의 조회 범위와 관측 시각을 확인하세요.",
+        agreement: "두 공급자에서 입력 URL의 위험 신호를 확인했어요.",
+        scope_differs: "공급자마다 조회 범위가 달라요.",
+      }[analysis.provider_comparison]]] : []),
+      ...(analysis.conditions?.max_age_hours != null ? [["요청 기간", `최근 ${analysis.conditions.max_age_hours}시간`],
+        ["기간 조건 충족", analysis.constraints_met]] : []),
+      ...(analysis.conditions?.exact_only ? [["요청 범위", "입력 URL과 정확히 일치하는 기록"]] : []),
+      ...(analysis.minimum_observed_at && analysis.conditions?.max_age_hours != null
+        ? [["관측 기준 시각", labels.when(analysis.minimum_observed_at)]] : []),
+      ...(analysis.text_assessment?.url_lookup === "not_attempted" ? [["외부 링크 조회", "수행하지 않음"]] : []),
+      ...(analysis.llm_error ? [["AI 분석 제한", labels.label(analysis.llm_error)]] : []),
       ...(analysis.stop_reason ? [["종료 사유", labels.label(analysis.stop_reason)]] : []),
       ...(analysis.replans > 0 ? [["재계획", `${analysis.replans}회`]] : []),
-      ["해석", "탐지 목록에 없더라도 안전하다고 확정할 수 없어요."]]});
+    ].filter(([, value]) => value != null)});
   if (!analysis.evidence.some((item) => item.eligible)) connect("input", "verdict", true);
   if (actions.length) {
     add({id: "actions", kind: "action", column: 4, title: "예방 행동", subtitle: `${actions.length}개 권장 행동`,
@@ -147,6 +159,18 @@ export function mountInvestigation(root, result, target, labels) {
   if (result.status === "partial") banner.append(el("p", "일부 조회를 완료하지 못했어요."));
   if (result.plan_draft) banner.append(control("예방 계획 저장", () => labels.save(result.plan_draft)));
   else if (labels.saveActions) banner.append(control("예방 계획 저장", labels.saveActions));
+  if (model.actions.length) {
+    const advice = el("div", null, "investigation-advice");
+    const mascot = el("img");
+    mascot.src = "/assets/shieldy-transparent.png";
+    mascot.alt = "";
+    mascot.width = 42;
+    mascot.height = 53;
+    const note = el("div");
+    note.append(el("strong", "쉴디의 예방 안내"), el("p", safe(model.actions[0])));
+    advice.append(mascot, note);
+    banner.append(advice);
+  }
 
   const layout = el("div", null, "investigation-layout");
   const overview = el("section", null, "investigation-card investigation-overview");
@@ -157,9 +181,6 @@ export function mountInvestigation(root, result, target, labels) {
     model.signals.forEach((signal) => list.append(el("li", safe(signal))));
     overview.append(list);
   } else overview.append(el("p", "표시할 정황 없음"));
-  if (model.actions.length) {
-    overview.append(el("h4", "권장 행동"), el("p", safe(model.actions[0])));
-  }
 
   const network = el("section", null, "investigation-card investigation-network");
   const toolbar = el("div", null, "investigation-toolbar");

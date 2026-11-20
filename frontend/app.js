@@ -1,4 +1,4 @@
-import {mountInvestigation} from "/assets/investigation.js?v=4";
+import {mountInvestigation} from "/assets/investigation.js?v=5";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, text, className) => {
@@ -246,173 +246,14 @@ function messageContextPanel(messageContext, mode) {
   return review;
 }
 
-function riskJudgmentPanel(verdict, nextAction) {
-  const summary = resultPanel("최종 위험 판단", "guidance");
-  const [status, style] = statuses[verdict] ?? statuses.INSUFFICIENT_EVIDENCE;
-  const indicator = el("span", {risk: "⚠", warn: "!", unmatched: "ⓘ", neutral: "—"}[style] ?? "ⓘ", "status-icon");
-  indicator.setAttribute("aria-hidden", "true");
-  const badge = el("strong", null, `result-status result-message ${style}`);
-  badge.append(indicator, el("span", status));
-  summary.append(badge);
-  if (nextAction) {
-    const next = el("div", null, "next-action");
-    const image = el("img", null, "advice-mascot");
-    image.src = "/assets/shieldy-transparent.png";
-    image.alt = "";
-    image.width = 55;
-    image.height = 69;
-    const advice = el("div");
-    advice.append(el("h3", "쉴디의 예방 안내"), el("p", nextAction));
-    const caution = {
-      KNOWN_RISK: "알려진 위험 근거를 확인했어요.",
-      SUSPICIOUS: "의심스러운 점이 있어요. 공식 연락처로 따로 확인하세요.",
-      NO_KNOWN_MATCH: "위험 기록이 없어도 링크나 메시지가 안전하다고 단정할 수는 없어요.",
-      INSUFFICIENT_EVIDENCE: "지금은 안전 여부를 판단할 만큼 정보가 충분하지 않아요.",
-    }[verdict];
-    if (caution) advice.append(el("p", caution, "row-hint"));
-    next.append(image, advice);
-    summary.append(next);
-  }
-  return summary;
-}
-
-function preventionPanel(actions, save) {
-  const guidance = resultPanel("추가 예방 행동");
-  if (actions.length) guidance.append(actionList(actions));
-  if (save) guidance.append(button("예방 계획에 저장", save, "primary"));
-  return guidance;
-}
-
-function renderResult(result) {
-  const analysis = result.analysis;
-  const area = $("analysis-result");
-  const recentSummary = recentEvidenceSummary(analysis);
-  const [firstAction, ...otherActions] = analysis.actions;
-  const checkOfficialChannel = ["NO_KNOWN_MATCH", "INSUFFICIENT_EVIDENCE"].includes(analysis.status);
-  const nextAction = checkOfficialChannel
-    ? "링크를 바로 누르지 말고, 보낸 곳의 공식 앱이나 웹사이트에 직접 들어가 같은 안내가 있는지 확인하세요. 확인 전에는 비밀번호나 인증번호를 입력하지 마세요."
-    : firstAction;
-  const summary = riskJudgmentPanel(analysis.status, nextAction);
-  if (result.status === "partial") {
-    summary.append(el("p", "일부 조회를 마치지 못했어요. 확인한 내용은 아래에서 볼 수 있어요.", "row-hint"));
-  }
-  const panels = [summary];
+function renderSupplement(result, area, mode) {
+  const {analysis} = result;
+  const panels = [];
   if (result.follow_up) panels.push(followUpPanel(result.run_id, result.follow_up));
-  const remainingActions = checkOfficialChannel ? analysis.actions : otherActions;
-  if (remainingActions.length || result.plan_draft) {
-    panels.push(preventionPanel(remainingActions,
-      result.plan_draft ? () => openPlanEditor({draft: result.plan_draft}) : null));
-  }
-  const context = resultPanel("판단 근거 요약");
-  context.append(el("p", recentSummary ?? analysis.message));
-  if (analysis.local_signals.length) {
-    const origin = analysis.text_assessment ? "문자 표현" : "입력 내용";
-    context.append(el("p", `${origin}의 의심 정황: ${analysis.local_signals.join(" · ")}`, "result-message"));
-  }
-  if (analysis.text_assessment?.url_lookup === "not_attempted") {
-    context.append(el("p", "문자 내용을 살펴봤어요. 외부 링크 조회는 하지 않았어요.", "row-hint"));
-  }
-  if (result.status === "partial") {
-    const parts = [];
-    if (analysis.llm_error) parts.push(`LLM 조회 실패: ${label(analysis.llm_error)} (${analysis.llm_error})`);
-    for (const [name, value] of Object.entries(analysis.tool_errors)) parts.push(`${toolName(name)}: ${label(value)}`);
-    if (parts.length) context.append(el("p", parts.join(" / "), "feedback warn"));
-  }
-  panels.push(context);
-  const messageContext = analysis.text_assessment?.context ?? analysis.message_context;
-  if (messageContext) panels.push(messageContextPanel(messageContext, analysis.text_assessment ? "text" : "url"));
-  {
-    const comparison = resultPanel("보안 서비스별 결과");
-    const comparisons = {
-      different: "공급자별 검사 결과가 다릅니다. 각 결과의 출처와 관측 범위를 확인하세요.",
-      agreement: "두 공급자에서 입력 URL에 대한 위험 신호를 확인했습니다.",
-      scope_differs: "공급자별 검사 범위가 다릅니다. 입력 URL·호스트·비교 패턴을 구분해 보세요.",
-    };
-    if (analysis.provider_comparison) {
-      comparison.append(el("p", comparisons[analysis.provider_comparison], "feedback warn"));
-    }
-    const outcomes = el("ul", null, "facts");
-    for (const name of Object.keys(tools)) {
-      const outcome = analysis.tool_outcomes[name];
-      const error = analysis.tool_errors[name];
-      const row = el("li", null, "fact");
-      if (!outcome || outcome === "MISSING_KEY" || outcome === "UNAVAILABLE_CONFIGURATION") {
-        row.append(el("strong", toolName(name)), el("p", error || outcome
-          ? `조회 결과 없음 · ${label(error ?? outcome)}` : "호출하지 않았어요.", "row-hint"));
-        outcomes.append(row);
-        continue;
-      }
-      const outcomeText = name === "google_safe_browsing" && outcome === "NO_MATCH"
-        ? "위험 목록에 없음" : label(outcome);
-      row.append(el("strong", `${toolName(name)} · ${outcomeText}`), el("div", outcome, "tag"));
-      for (const record of analysis.evidence.filter((entry) => entry.tool === name)) {
-        const scope = scopes[record.scope] ?? record.scope;
-        row.append(el("p", `${scope} · 관측 시각: ${when(record.observed_at)}`, "row-hint"));
-      }
-      const item = analysis.evidence.find((entry) => entry.tool === name && entry.reported_engines != null);
-      if (item) {
-        const strength = {single_engine: "단일 엔진 탐지", multiple_engines: "여러 엔진 탐지"};
-        row.append(el("p", `탐지 엔진 ${item.engine_counts?.malicious ?? 0}개 · 응답 분류 합계 ${item.reported_engines}건`, "row-hint"));
-        if (item.detection_strength) row.append(el("p", strength[item.detection_strength], "tag"));
-        row.append(el("p", Object.entries(item.engine_counts).map(([key, count]) => `${key}: ${count}`).join(" · "), "row-hint"));
-      }
-      if (name === "google_safe_browsing" && outcome === "NO_MATCH") {
-        row.append(el("p", "Google의 위험 목록에 이 링크는 없었어요. 목록에 없다고 해서 안전하다는 뜻은 아니에요.", "row-hint"));
-      }
-      outcomes.append(row);
-    }
-    comparison.append(outcomes);
-    panels.push(comparison);
-  }
-  const evidence = el("details", null, "result-section evidence-details");
-  evidence.append(el("summary", "상세 근거 및 제외 사유"));
-  const observations = resultPanel("관측 시각과 조회 조건");
-  const hours = analysis.conditions?.max_age_hours;
-  if (hours != null) {
-    observations.append(el("p", `요청: 최근 ${hours}시간 · 전체 조건 ${analysis.constraints_met ? "충족" : "미충족"} · 기준 시각: ${when(analysis.minimum_observed_at)}`, "row-hint"));
-  }
-  if (analysis.conditions?.exact_only) observations.append(el("p", "요청 범위: 입력 URL과 정확히 일치하는 기록", "row-hint"));
-  if (analysis.evidence.length) {
-    const facts = el("ul", null, "facts");
-    const dateList = el("ul", null, "facts");
-    const search = analysis.evidence.find((item) => item.searched_days != null);
-    if (search) {
-      const limit = search.searched_days < search.requested_search_days
-        ? ` · 공급자 한도: 요청 ${search.requested_search_days}일 중 ${search.searched_days}일` : "";
-      const remainder = search.candidate_more_available ? " · 미조회 페이지 있음" : "";
-      const condition = hours == null ? "" : ` · 후보 판단 기준: 최근 ${hours}시간`;
-      observations.append(el("p", `urlscan.io 공개 기록: 최근 ${search.searched_days}일, ${search.candidate_pages}페이지${limit}${condition}${remainder}`, "row-hint"));
-    }
-    for (const item of analysis.evidence) {
-      const row = el("li", null, "fact");
-      const scope = item.supplemental_search ? "추가 후보 조회" : scopes[item.scope] || item.scope;
-      const period = hours == null ? "" : ` · 요청 기간: ${item.observed_at ? (item.freshness_met ? "충족" : "미충족") : "검증 불가"}`;
-      dateList.append(el("li", `${item.source} · ${scope} · 관측: ${when(item.observed_at)}${period}`, "fact"));
-      row.append(el("strong", `${item.source} · ${scope}`));
-      row.append(el("div", item.eligible ? "검증 근거로 사용 가능" : "검증 근거에서 제외", "row-hint"));
-      if (item.exclusion_reasons?.length) {
-        const reasons = el("ul", null, "row-hint");
-        for (const reason of item.exclusion_reasons) {
-          reasons.append(el("li", reason.code === "API_ERROR" ? `${reason.message} (${label(item.outcome)})` : reason.message));
-        }
-        row.append(reasons);
-      }
-      if (item.threat_types?.length) row.append(el("div", item.threat_types.join(" · "), "tag"));
-      if (item.scan_id) row.append(el("div", `스캔 ID: ${item.scan_id}`, "tag"));
-      if (item.supplemental_candidate_id) {
-        row.append(el("p", "정확 URL 보강 후보 · VirusTotal 기존 보고서", "row-hint"));
-      }
-      facts.append(row);
-    }
-    observations.append(dateList);
-    evidence.append(facts);
-  } else {
-    observations.append(el("p", "표시할 외부 관측 시각이 없어요.", "row-hint"));
-    evidence.append(el("p", "표시할 외부 관측 근거가 없습니다.", "row-hint"));
-  }
-  panels.push(observations, evidence);
+  const context = analysis.text_assessment?.context ?? analysis.message_context;
+  if (context) panels.push(messageContextPanel(context, mode));
   area.replaceChildren(...panels);
-  area.hidden = false;
+  area.hidden = !panels.length;
 }
 
 function describeEvent({event_type: type, data: d}) {
@@ -474,20 +315,7 @@ function renderTimeline(target, events, showRaw = false) {
   target.replaceChildren(list);
 }
 
-function showDecisions(target, decisions) {
-  const selected = decisions.filter((decision) => decision.choices.some((choice) => tools[choice]));
-  if (!selected.length) return;
-  const sources = el("section");
-  sources.append(el("h3", "Tool 선택과 판단 출처"));
-  const list = el("ul", null, "actions");
-  for (const decision of selected) {
-    const task = decision.stage === "replan" ? "재계획" : "초기 계획";
-    const names = decision.choices.filter((choice) => tools[choice]).map(toolName);
-    list.append(el("li", `${task} · ${decision.source === "llm" ? "LLM 선택" : "규칙 선택"}: ${names.join(" → ")}`));
-  }
-  sources.append(list);
-  target.prepend(sources);
-}
+
 
 const form = $("analysis-form");
 const message = $("message");
@@ -504,7 +332,7 @@ let callInvestigation;
 function openInvestigation(element, result, target, extra = {}) {
   return mountInvestigation($(element), result, target, {
     statuses, scopes, toolName, label, when, describeEvent,
-    save: (draft) => openPlanEditor({draft}), ...extra,
+    save: (draft) => openPlanEditor({draft}), verdictNote: recentEvidenceSummary(result.analysis), ...extra,
   });
 }
 
@@ -539,7 +367,6 @@ function selectAnalysisInput(type) {
     investigation = undefined;
     $("analysis-result").hidden = true;
     feedback($("analysis-feedback"));
-    empty($("trace"), "아직 실행 기록이 없습니다.");
   }
   const [title, description, placeholder] = analysisInputs[type];
   $("input-title").textContent = title;
@@ -564,9 +391,7 @@ form.addEventListener("submit", async (event) => {
   investigation = undefined;
   $("analysis-result").hidden = true;
   feedback($("analysis-feedback"), "분석 요청을 처리 중입니다. 완료 후 검증 결과를 표시합니다.");
-  const trace = $("trace");
   const version = analysisViewVersion;
-  empty(trace, "서버 응답 대기 중", "실행 타임라인은 분석 응답을 받은 뒤 조회합니다.");
   try {
     const target = form.elements.target_type.value;
     const optedIn = form.elements.context_analysis.checked;
@@ -576,25 +401,20 @@ form.addEventListener("submit", async (event) => {
       ...(optedIn ? {context_analysis: true, ...(note ? {context_note: note} : {})} : {}),
     });
     if (version !== analysisViewVersion) return;
-    renderResult(data);
+    renderSupplement(data, $("analysis-result"), target);
     investigation = openInvestigation("analysis-investigation", data, target);
     feedback($("analysis-feedback"), data.status === "partial" ? "분석 완료 · 일부 조회 실패" : "분석 완료", data.status === "partial" ? "warn" : "");
     try {
       const log = await api(`/api/logs/${encodeURIComponent(data.run_id)}`);
       if (version !== analysisViewVersion) return;
       investigation.update(log.events);
-      renderTimeline(trace, log.events);
     } catch (error) {
       if (version !== analysisViewVersion) return;
       investigation.update(null, investigationLogFailure(error));
-      empty(trace, error.code === "LOG_NOT_FOUND" ? "저장된 실행 로그 없음" : "실행 로그 조회 실패",
-        error.code === "LOG_NOT_FOUND" ? "분석 결과는 위에서 확인할 수 있어요." : error.message);
     }
-    showDecisions(trace, data.analysis.decisions);
   } catch (error) {
     if (version !== analysisViewVersion) return;
     feedback($("analysis-feedback"), error.message, "error");
-    empty(trace, "표시할 실행 기록 없음");
   } finally {
     submit.disabled = false;
   }
@@ -662,29 +482,15 @@ callForm.addEventListener("submit", async (event) => {
       ...(note ? {context_note: note} : {}),
       call_context: {request: input.get("request"), verification: input.get("verification"), already_sent: input.has("sent")},
     });
-    const {analysis} = result;
-    const [firstAction, ...otherActions] = actions;
-    const summary = riskJudgmentPanel(analysis.status, firstAction);
-    const resultTitle = summary.querySelector("h2");
-    resultTitle.id = "call-result-title";
-    resultTitle.tabIndex = -1;
     const restoreFocus = document.activeElement === heading;
-    const panels = [summary];
-    if (result.follow_up) panels.push(followUpPanel(result.run_id, result.follow_up));
-    panels.push(preventionPanel(otherActions, () => {
-      openPlanEditor(result.plan_draft ? {draft: result.plan_draft} : {actions});
-    }));
-    const details = resultPanel("판단 근거 요약");
-    status.textContent = analysis.local_signals.length
-      ? `입력한 상황에서 확인한 의심 신호: ${analysis.local_signals.join(" · ")}`
-      : "입력한 내용만으로 사칭인지 판단하기 어려워요.";
-    details.append(status);
-    panels.push(details);
-    if (analysis.text_assessment?.context) panels.push(messageContextPanel(analysis.text_assessment.context, "call"));
-    output.replaceChildren(...panels);
-    if (restoreFocus && !output.closest("[hidden]")) resultTitle.focus();
+    renderSupplement(result, output, "call");
     callInvestigation = openInvestigation("call-investigation", result, "call", {callFacts, callActions: actions,
       saveActions: () => openPlanEditor({actions})});
+    if (restoreFocus && !$("call-view").hidden) {
+      const canvasHeading = $("call-investigation").querySelector("h2");
+      canvasHeading.tabIndex = -1;
+      canvasHeading.focus();
+    }
     try {
       const log = await api(`/api/logs/${encodeURIComponent(result.run_id)}`);
       callInvestigation.update(log.events);
